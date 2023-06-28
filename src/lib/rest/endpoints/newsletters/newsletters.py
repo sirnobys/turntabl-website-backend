@@ -12,12 +12,14 @@ class Newsletters(Resource):
         cursor.execute(cmd)
         conn.commit()
         data = cursor.fetchall()
-        for row in data:
-            (id, email) = row
-            result.append({
-                'id': id,
-                'email': email
-            })
+
+        if data is not None:
+            for row in data:
+                (id, email) = row
+                result.append({
+                    'id': id,
+                    'email': email
+                })
 
         cursor.close()
         conn.close()

@@ -1,5 +1,5 @@
 from flask import request
-from flask_restx import Resource, fields
+from flask_restx import Resource
 
 from src.lib.db.db_utils import connect_to_db
 
@@ -13,15 +13,17 @@ class Blogs(Resource):
         cursor.execute(cmd)
         conn.commit()
         data = cursor.fetchall()
-        for row in data:
-            (id, title, url, image, description) = row
-            result.append({
-                'id': id,
-                'title': title,
-                'url': url,
-                'image': bytes(image).decode('latin-1'),
-                'description': description
-            })
+
+        if data is not None:
+            for row in data:
+                (id, title, url, image, description) = row
+                result.append({
+                    'id': id,
+                    'title': title,
+                    'url': url,
+                    'image': bytes(image).decode('latin-1'),
+                    'description': description
+                })
 
         cursor.close()
         conn.close()
