@@ -11,8 +11,8 @@ class Newsletters(Resource):
         cmd = 'SELECT * FROM newsletters'
         cursor.execute(cmd)
         conn.commit()
-
-        for row in cursor.fetchall():
+        data = cursor.fetchall()
+        for row in data:
             (id, email) = row
             result.append({
                 'id': id,
@@ -26,8 +26,8 @@ class Newsletters(Resource):
     def post(self, email):
         conn = connect_to_db()
         cursor = conn.cursor()
-        cmd = f"INSERT INTO newsletters(email) VALUES ('{email}')"
-        cursor.execute(cmd)
+        cmd = f"INSERT INTO newsletters(email) VALUES (%s)"
+        cursor.execute(cmd, (email,))
         conn.commit()
 
         cursor.close()
