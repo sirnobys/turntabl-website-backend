@@ -1,37 +1,48 @@
+from flask import request
 from flask_restx import Resource
 
 from src.lib.db.db_utils import connect_to_db
 
 
 class Events(Resource):
-    def get(self):
+    def get(self, id=None):
         result = []
         conn = connect_to_db()
         cursor = conn.cursor()
-        cmd = 'SELECT * FROM events'
+        cmd = 'SELECT * FROM events WHERE id=%s' % id if id else 'SELECT * FROM events'
         cursor.execute(cmd)
         conn.commit()
-
-        for row in cursor.fetchall():
-            (id, title, url, image, description) = row
-            result.append({
-                'id': id,
-                'title': title,
-                'url': url,
-                'image': image,
-                'description': description
-            })
+        data = cursor.fetchall()
+        if data is not None:
+            for row in data:
+                (id, name, description, image, links, event_type) = row
+                result.append({
+                    'id': id,
+                    'name': name,
+                    'description': description,
+                    'image': bytes(image).decode('latin-1'),
+                    'links': links,
+                    'event_type': event_type
+                })
 
         cursor.close()
         conn.close()
         return result
 
-    def post(self, title, url, image, description):
+    def post(self):
+        data = request.form
+        name = data.get('name')
+        description = data.get('description')
+        image_file = request.files['image']
+        binary_data = image_file.read()
+        links = data.get('links')
+        event_type = data.get('event_type')
+
         conn = connect_to_db()
         cursor = conn.cursor()
-        cmd = f"INSERT INTO events(title, url, image, description) VALUES " \
-              f"('{title}', '{url}', '{image}', '{description}')"
-        cursor.execute(cmd)
+        cmd = "INSERT INTO events(name, description, image, links, event_type) VALUES " \
+              "(%s, %s, %s, %s, %s)"
+        cursor.execute(cmd, (name, description, binary_data, links, event_type))
         conn.commit()
 
         cursor.close()
