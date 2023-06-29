@@ -16,10 +16,10 @@ class Blogs(Resource):
 
         if data is not None:
             for row in data:
-                (id, title, url, image, description) = row
+                (id, name, url, image, description) = row
                 result.append({
                     'id': id,
-                    'title': title,
+                    'name': name,
                     'url': url,
                     'image': bytes(image).decode('latin-1'),
                     'description': description
@@ -31,7 +31,7 @@ class Blogs(Resource):
 
     def post(self):
         data = request.form
-        title = data.get('title')
+        name = data.get('name')
         url = data.get('url')
         image_file = request.files['image']
         binary_data = image_file.read()
@@ -39,8 +39,8 @@ class Blogs(Resource):
 
         conn = connect_to_db()
         cursor = conn.cursor()
-        cmd = "INSERT INTO blogs(title, url, image, description) VALUES (%s, %s, %s, %s)"
-        cursor.execute(cmd, (title, url, binary_data, description,))
+        cmd = "INSERT INTO blogs(name, url, image, description) VALUES (%s, %s, %s, %s)"
+        cursor.execute(cmd, (name, url, binary_data, description,))
         conn.commit()
 
         cursor.close()
