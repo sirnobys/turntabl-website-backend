@@ -6,12 +6,8 @@ from src.lib.db.db_utils import connect_to_db
 class Newsletters(Resource):
     def get(self):
         result = []
-        conn = connect_to_db()
-        cursor = conn.cursor()
-        cmd = 'SELECT * FROM newsletters'
-        cursor.execute(cmd)
-        conn.commit()
-        data = cursor.fetchall()
+        db = connect_to_db()
+        data = db.get_entry('newsletters')
 
         if data is not None:
             for row in data:
@@ -21,18 +17,13 @@ class Newsletters(Resource):
                     'email': email
                 })
 
-        cursor.close()
-        conn.close()
         return result
 
     def post(self, email):
-        conn = connect_to_db()
-        cursor = conn.cursor()
-        cmd = f"INSERT INTO newsletters(email) VALUES (%s)"
-        cursor.execute(cmd, (email,))
-        conn.commit()
+        db = connect_to_db()
+        result = db.add_entry('newsletters', ['email'], email)
 
-        cursor.close()
-        conn.close()
-
-        return 'success'
+        status = 'failed'
+        if result:
+            status = 'success'
+        return status

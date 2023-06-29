@@ -7,13 +7,8 @@ from src.lib.db.db_utils import connect_to_db
 class Careers(Resource):
     def get(self, id=None):
         result = []
-        conn = connect_to_db()
-        cursor = conn.cursor()
-        cmd = 'SELECT * FROM careers WHERE id=%s' % id if id else 'SELECT * FROM careers'
-        print(cmd)
-        cursor.execute(cmd)
-        conn.commit()
-        data = cursor.fetchall()
+        db = connect_to_db()
+        data = db.get_entry('careers', id)
 
         if data is not None:
             for row in data:
@@ -28,9 +23,6 @@ class Careers(Resource):
                     'technologies': technologies,
                     'salary': salary
                 })
-
-        cursor.close()
-        conn.close()
         return result
 
     def post(self):
@@ -43,17 +35,17 @@ class Careers(Resource):
         technologies = data.get('technologies')
         salary = data.get('salary')
 
-        conn = connect_to_db()
-        cursor = conn.cursor()
-        cmd = "INSERT INTO careers(name, department, description, requirements, responsibilities, technologies, salary) VALUES (%s, %s, %s, " \
-              "%s, %s, %s, %s)"
-        cursor.execute(cmd, (name, department, description, requirements, responsibilities, technologies, salary,))
-        conn.commit()
+        db = connect_to_db()
+        result = db.add_entry(
+            'careers',
+            ['name', 'department', 'description', 'requirements', 'responsibilities', 'technologies', 'salary'],
+            name, department, description, requirements, responsibilities, technologies, salary
+        )
 
-        cursor.close()
-        conn.close()
-
-        return 'success'
+        status = 'failed'
+        if result:
+            status = 'success'
+        return status
 
     def put(self):
         return 'update'

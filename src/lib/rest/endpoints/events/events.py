@@ -7,12 +7,9 @@ from src.lib.db.db_utils import connect_to_db
 class Events(Resource):
     def get(self, id=None):
         result = []
-        conn = connect_to_db()
-        cursor = conn.cursor()
-        cmd = 'SELECT * FROM events WHERE id=%s' % id if id else 'SELECT * FROM events'
-        cursor.execute(cmd)
-        conn.commit()
-        data = cursor.fetchall()
+        db = connect_to_db()
+        data = db.get_entry('events', id)
+
         if data is not None:
             for row in data:
                 (id, name, description, image, links, event_type) = row
@@ -25,8 +22,6 @@ class Events(Resource):
                     'event_type': event_type
                 })
 
-        cursor.close()
-        conn.close()
         return result
 
     def post(self):
@@ -38,17 +33,17 @@ class Events(Resource):
         links = data.get('links')
         event_type = data.get('event_type')
 
-        conn = connect_to_db()
-        cursor = conn.cursor()
-        cmd = "INSERT INTO events(name, description, image, links, event_type) VALUES " \
-              "(%s, %s, %s, %s, %s)"
-        cursor.execute(cmd, (name, description, binary_data, links, event_type))
-        conn.commit()
+        db = connect_to_db()
+        result = db.add_entry(
+            'events',
+            ['name', 'description', 'image', 'links', 'event_type'],
+            name, description, binary_data, links, event_type
+        )
 
-        cursor.close()
-        conn.close()
-
-        return 'success'
+        status = 'failed'
+        if result:
+            status = 'success'
+        return status
 
     def put(self):
         return 'update'

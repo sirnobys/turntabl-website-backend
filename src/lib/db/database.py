@@ -17,3 +17,26 @@ class Database():
             password=self.password,
             port=self.port
         )
+
+    def get_entry(self, table_name, id=None):
+        cmd = 'SELECT * FROM %s WHERE id=%s' % (table_name, id) if id else 'SELECT * FROM %s' % table_name
+        cursor = self.conn.cursor()
+        cursor.execute(cmd)
+        self.conn.commit()
+        result = cursor.fetchall()
+
+        cursor.close()
+        self.conn.close()
+
+        return result
+
+    def add_entry(self, table_name, columns, *args):
+        values = ['%s'] * len(columns)
+        cmd = f"INSERT INTO {table_name}({','.join(columns)}) VALUES ({','.join(values)})"
+        cursor = self.conn.cursor()
+        cursor.execute(cmd, (*args,))
+        self.conn.commit()
+
+        cursor.close()
+        self.conn.close()
+        return True

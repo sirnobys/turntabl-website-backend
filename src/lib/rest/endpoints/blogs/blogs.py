@@ -7,12 +7,8 @@ from src.lib.db.db_utils import connect_to_db
 class Blogs(Resource):
     def get(self):
         result = []
-        conn = connect_to_db()
-        cursor = conn.cursor()
-        cmd = 'SELECT * FROM blogs'
-        cursor.execute(cmd)
-        conn.commit()
-        data = cursor.fetchall()
+        db = connect_to_db()
+        data = db.get_entry('blogs')
 
         if data is not None:
             for row in data:
@@ -25,8 +21,6 @@ class Blogs(Resource):
                     'description': description
                 })
 
-        cursor.close()
-        conn.close()
         return result
 
     def post(self):
@@ -37,16 +31,17 @@ class Blogs(Resource):
         binary_data = image_file.read()
         description = data.get('description')
 
-        conn = connect_to_db()
-        cursor = conn.cursor()
-        cmd = "INSERT INTO blogs(name, url, image, description) VALUES (%s, %s, %s, %s)"
-        cursor.execute(cmd, (name, url, binary_data, description,))
-        conn.commit()
+        db = connect_to_db()
+        result = db.add_entry(
+                                'blogs',
+                                ['name', 'url', 'image', 'description'],
+                                name, url, binary_data, description
+                              )
 
-        cursor.close()
-        conn.close()
-
-        return 'success'
+        status = 'failed'
+        if result:
+            status = 'success'
+        return status
 
     def put(self):
         return 'update'
