@@ -18,8 +18,12 @@ class Database():
             port=self.port
         )
 
-    def get_entry(self, table_name, id=None):
+    def get_entry(self, table_name, id=None, filters={}):
+        filter_items = [f'{k}={v}' for k, v in filters.items()]
         cmd = 'SELECT * FROM %s WHERE id=%s' % (table_name, id) if id else 'SELECT * FROM %s' % table_name
+        if len(filter_items) != 0:
+            cmd = cmd + ' AND ' + 'AND '.join(filter_items) if id else cmd + ' WHERE ' + 'AND '.join(filter_items)
+
         cursor = self.conn.cursor()
         cursor.execute(cmd)
         self.conn.commit()

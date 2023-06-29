@@ -5,10 +5,14 @@ from src.lib.db.db_utils import connect_to_db
 
 
 class CareerApplicants(Resource):
-    def get(self, id=None):
+    def get(self, id=None, career_id=None):
         result = []
+        filters = {}
+
+        if career_id:
+            filters['career_id'] = career_id
         db = connect_to_db()
-        data = db.get_entry('career_applicants', id)
+        data = db.get_entry('career_applicants', id, filters)
 
         if data is not None:
             for row in data:
