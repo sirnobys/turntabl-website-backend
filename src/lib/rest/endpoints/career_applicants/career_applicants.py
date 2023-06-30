@@ -16,7 +16,7 @@ class CareerApplicants(Resource):
 
         if data is not None:
             for row in data:
-                (id, career_id, first_name, last_name, email, cv) = row
+                (id, career_id, first_name, last_name, email, cv, date_created) = row
                 result.append({
                     'id': id,
                     'career_id': career_id,
@@ -24,6 +24,7 @@ class CareerApplicants(Resource):
                     'last_name': last_name,
                     'email': email,
                     'cv': bytes(cv).decode('latin-1'),
+                    'date_created': date_created.strftime('%Y-%m-%d %H:%M:%S')
                 })
 
         return result
@@ -44,12 +45,7 @@ class CareerApplicants(Resource):
             career_id, first_name, last_name, email, binary_data
         )
 
-        status = 'failed'
-        if result:
-            status = 'success'
-        return status
-
-        return 'success'
+        return 'success' if result else 'failed'
 
     def put(self):
         return 'update'

@@ -12,13 +12,14 @@ class Blogs(Resource):
 
         if data is not None:
             for row in data:
-                (id, name, url, image, description) = row
+                (id, name, url, image, description, date_created) = row
                 result.append({
                     'id': id,
                     'name': name,
                     'url': url,
                     'image': bytes(image).decode('latin-1'),
-                    'description': description
+                    'description': description,
+                    'date_created': date_created.strftime('%Y-%m-%d %H:%M:%S')
                 })
 
         return result
@@ -38,10 +39,7 @@ class Blogs(Resource):
                                 name, url, binary_data, description
                               )
 
-        status = 'failed'
-        if result:
-            status = 'success'
-        return status
+        return 'success' if result else 'failed'
 
     def put(self):
         return 'update'

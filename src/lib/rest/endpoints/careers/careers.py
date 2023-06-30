@@ -12,7 +12,7 @@ class Careers(Resource):
 
         if data is not None:
             for row in data:
-                (id, name, department, description, requirements, responsibilities, technologies, salary) = row
+                (id, name, department, description, requirements, responsibilities, technologies, salary, date_created) = row
                 result.append({
                     'id': id,
                     'name': name,
@@ -21,7 +21,8 @@ class Careers(Resource):
                     'requirements': requirements,
                     'responsibilities': responsibilities,
                     'technologies': technologies,
-                    'salary': salary
+                    'salary': salary,
+                    'date_created': date_created.strftime('%Y-%m-%d %H:%M:%S')
                 })
         return result
 
@@ -42,10 +43,7 @@ class Careers(Resource):
             name, department, description, requirements, responsibilities, technologies, salary
         )
 
-        status = 'failed'
-        if result:
-            status = 'success'
-        return status
+        return 'success' if result else 'failed'
 
     def put(self):
         return 'update'

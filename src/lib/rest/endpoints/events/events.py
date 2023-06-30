@@ -12,14 +12,15 @@ class Events(Resource):
 
         if data is not None:
             for row in data:
-                (id, name, description, image, links, event_type) = row
+                (id, name, description, image, links, status, date_created) = row
                 result.append({
                     'id': id,
                     'name': name,
                     'description': description,
                     'image': bytes(image).decode('latin-1'),
                     'links': links,
-                    'event_type': event_type
+                    'status': status,
+                    'date_created': date_created.strftime('%Y-%m-%d %H:%M:%S')
                 })
 
         return result
@@ -31,19 +32,16 @@ class Events(Resource):
         image_file = request.files['image']
         binary_data = image_file.read()
         links = data.get('links')
-        event_type = data.get('event_type')
+        status = data.get('status')
 
         db = connect_to_db()
         result = db.add_entry(
             'events',
-            ['name', 'description', 'image', 'links', 'event_type'],
-            name, description, binary_data, links, event_type
+            ['name', 'description', 'image', 'links', 'status'],
+            name, description, binary_data, links, status
         )
 
-        status = 'failed'
-        if result:
-            status = 'success'
-        return status
+        return 'success' if result else 'failed'
 
     def put(self):
         return 'update'

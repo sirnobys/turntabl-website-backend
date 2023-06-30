@@ -11,10 +11,11 @@ class Newsletters(Resource):
 
         if data is not None:
             for row in data:
-                (id, email) = row
+                (id, email, date_created) = row
                 result.append({
                     'id': id,
-                    'email': email
+                    'email': email,
+                    'date_created': date_created.strftime('%Y-%m-%d %H:%M:%S')
                 })
 
         return result
@@ -23,7 +24,4 @@ class Newsletters(Resource):
         db = connect_to_db()
         result = db.add_entry('newsletters', ['email'], email)
 
-        status = 'failed'
-        if result:
-            status = 'success'
-        return status
+        return 'success' if result else 'failed'
