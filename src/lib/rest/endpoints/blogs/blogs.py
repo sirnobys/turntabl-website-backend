@@ -1,3 +1,5 @@
+import logging
+
 from flask import request
 from flask_restx import Resource
 
@@ -6,23 +8,34 @@ from src.lib.db.db_utils import connect_to_db
 
 class Blogs(Resource):
     def get(self):
+        resp = {}
         result = []
-        db = connect_to_db()
-        data = db.get_entry('blogs')
+        error = None
+        status_code = 200
+        try:
+            db = connect_to_db()
+            data = db.get_entry('blogs')
 
-        if data is not None:
-            for row in data:
-                (id, name, url, image, description, date_created) = row
-                result.append({
-                    'id': id,
-                    'name': name,
-                    'url': url,
-                    'image': bytes(image).decode('latin-1'),
-                    'description': description,
-                    'date_created': date_created.strftime('%Y-%m-%d %H:%M:%S')
-                })
+            if data:
+                for row in data:
+                    (id, name, url, image, description, date_created) = row
+                    result.append({
+                        'id': id,
+                        'name': name,
+                        'url': url,
+                        'image': bytes(image).decode('latin-1'),
+                        'description': description,
+                        'date_created': date_created.strftime('%Y-%m-%d %H:%M:%S')
+                    })
+        except Exception as e:
+            error = f'Something went wrong. Details: {e}'
+            logging.error(error)
 
-        return result
+        resp['result'] = result
+        if error:
+            resp['error'] = error
+            status_code = 500
+        return resp, status_code
 
     def post(self):
         data = request.form
@@ -32,14 +45,21 @@ class Blogs(Resource):
         binary_data = image_file.read()
         description = data.get('description')
 
-        db = connect_to_db()
-        result = db.add_entry(
-                                'blogs',
-                                ['name', 'url', 'image', 'description'],
-                                name, url, binary_data, description
-                              )
+        resp = 'success'
+        status_code = 200
+        try:
+            db = connect_to_db()
+            db.add_entry(
+                        'blogs',
+                        ['name', 'url', 'image', 'description'],
+                        name, url, binary_data, description
+                      )
+        except Exception as e:
+            resp = f'Something went wrong. Details: {e}'
+            status_code = 500
+            logging.error(resp)
 
-        return 'success' if result else 'failed'
+        return resp, status_code
 
     def put(self):
         return 'update'

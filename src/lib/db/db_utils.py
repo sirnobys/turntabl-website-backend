@@ -10,7 +10,5 @@ def connect_to_db():
     user_name = os.getenv('DB_USER_NAME')
     password = os.getenv('DB_PASSWORD')
     port = os.getenv('DB_PORT')
-    print(hostname, db_name, user_name, password, port)
-    if not (hostname and db_name and user_name and password and port):
-        return None
+
     return Database(hostname, db_name, user_name, password, port)

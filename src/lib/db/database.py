@@ -23,23 +23,30 @@ class Database():
         cmd = 'SELECT * FROM %s' % table_name
         if len(filter_items) != 0:
             cmd = cmd + ' WHERE ' + 'AND '.join(filter_items)
-        cursor = self.conn.cursor()
-        cursor.execute(cmd)
-        self.conn.commit()
-        result = cursor.fetchall()
 
-        cursor.close()
-        self.conn.close()
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute(cmd)
+            self.conn.commit()
+            result = cursor.fetchall()
+
+            cursor.close()
+            self.conn.close()
+        except Exception as e:
+            raise e
 
         return result
 
     def add_entry(self, table_name, columns, *args):
         values = ['%s'] * len(columns)
         cmd = f"INSERT INTO {table_name}({','.join(columns)}) VALUES ({','.join(values)})"
-        cursor = self.conn.cursor()
-        cursor.execute(cmd, (*args,))
-        self.conn.commit()
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute(cmd, (*args,))
+            self.conn.commit()
 
-        cursor.close()
-        self.conn.close()
+            cursor.close()
+            self.conn.close()
+        except Exception as e:
+            raise e
         return True
