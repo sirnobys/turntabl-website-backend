@@ -1,3 +1,5 @@
+import logging
+
 from flask import request
 from flask_restx import Resource
 
@@ -6,28 +8,42 @@ from src.lib.db.db_utils import connect_to_db
 
 class Careers(Resource):
     def get(self, id=None):
+        resp = {}
         result = []
+        error = None
+        status_code = 200
         filters = {}
-        db = connect_to_db()
+
         if id:
             filters['id'] = id
-        data = db.get_entry('careers', filters)
 
-        if data is not None:
-            for row in data:
-                (id, name, department, description, requirements, responsibilities, technologies, salary, date_created) = row
-                result.append({
-                    'id': id,
-                    'name': name,
-                    'department': department,
-                    'description': description,
-                    'requirements': requirements,
-                    'responsibilities': responsibilities,
-                    'technologies': technologies,
-                    'salary': salary,
-                    'date_created': date_created.strftime('%Y-%m-%d %H:%M:%S')
-                })
-        return result
+        try:
+            db = connect_to_db()
+            data = db.get_entry('careers', filters)
+
+            if data:
+                for row in data:
+                    (id, name, department, description, requirements, responsibilities, technologies, salary, date_created) = row
+                    result.append({
+                        'id': id,
+                        'name': name,
+                        'department': department,
+                        'description': description,
+                        'requirements': requirements,
+                        'responsibilities': responsibilities,
+                        'technologies': technologies,
+                        'salary': salary,
+                        'date_created': date_created.strftime('%Y-%m-%d %H:%M:%S')
+                    })
+        except Exception as e:
+            error = f'Something went wrong. Details: {e}'
+            logging.error(error)
+
+        resp['result'] = result
+        if error:
+            resp['error'] = error
+            status_code = 500
+        return resp, status_code
 
     def post(self):
         data = request.json
@@ -39,14 +55,22 @@ class Careers(Resource):
         technologies = data.get('technologies')
         salary = data.get('salary')
 
-        db = connect_to_db()
-        result = db.add_entry(
-            'careers',
-            ['name', 'department', 'description', 'requirements', 'responsibilities', 'technologies', 'salary'],
-            name, department, description, requirements, responsibilities, technologies, salary
-        )
+        resp = 'success'
+        status_code = 200
 
-        return 'success' if result else 'failed'
+        try:
+            db = connect_to_db()
+            db.add_entry(
+                'careers',
+                ['name', 'department', 'description', 'requirements', 'responsibilities', 'technologies', 'salary'],
+                name, department, description, requirements, responsibilities, technologies, salary
+            )
+        except Exception as e:
+            resp = f'Something went wrong. Details: {e}'
+            status_code = 500
+            logging.error(resp)
+
+        return resp, status_code
 
     def put(self):
         return 'update'
