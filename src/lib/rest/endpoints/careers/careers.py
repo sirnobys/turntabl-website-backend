@@ -7,8 +7,11 @@ from src.lib.db.db_utils import connect_to_db
 class Careers(Resource):
     def get(self, id=None):
         result = []
+        filters = {}
         db = connect_to_db()
-        data = db.get_entry('careers', id)
+        if id:
+            filters['id'] = id
+        data = db.get_entry('careers', filters)
 
         if data is not None:
             for row in data:

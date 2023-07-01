@@ -7,8 +7,11 @@ from src.lib.db.db_utils import connect_to_db
 class Events(Resource):
     def get(self, id=None):
         result = []
+        filters = {}
         db = connect_to_db()
-        data = db.get_entry('events', id)
+        if id:
+            filters['id'] = id
+        data = db.get_entry('events', filters)
 
         if data is not None:
             for row in data:

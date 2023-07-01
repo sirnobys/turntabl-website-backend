@@ -9,10 +9,12 @@ class CareerApplicants(Resource):
         result = []
         filters = {}
 
+        if id:
+            filters['id'] = id
         if career_id:
             filters['career_id'] = career_id
         db = connect_to_db()
-        data = db.get_entry('career_applicants', id, filters)
+        data = db.get_entry('career_applicants', filters)
 
         if data is not None:
             for row in data:
