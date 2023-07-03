@@ -2,14 +2,14 @@ from flask import Flask
 from flask_restx import Api
 from flask_cors import CORS
 
-from endpoints.newsletters.namespace import api as newletters_api
-from endpoints.blogs.namespace import api as blogs_api
-from endpoints.careers.namespace import api as careers_api
-from endpoints.career_applicants.namespace import api as career_applicants_api
-from endpoints.events.namespace import api as events_api
+from src.lib.rest.endpoints.v1.newsletters.namespace import api as newletters_api
+from src.lib.rest.endpoints.v1.blogs.namespace import api as blogs_api
+from src.lib.rest.endpoints.v1.careers.namespace import api as careers_api
+from src.lib.rest.endpoints.v1.career_applicants.namespace import api as career_applicants_api
+from src.lib.rest.endpoints.v1.events.namespace import api as events_api
 
 app = Flask(__name__)
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+cors = CORS(app, resources={r"/api/v1/*": {"origins": "http://localhost:3000"}})
 api = Api(app, version='1.0', title='Turntabl Website API',
         description='API to manage website content')
 

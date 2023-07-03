@@ -25,7 +25,6 @@ class Events(Resource):
             if data:
                 for row in data:
                     (id, name, description, image, link, status, date_created) = row
-                    print(link)
                     result.append({
                         'id': id,
                         'name': name,
@@ -47,6 +46,7 @@ class Events(Resource):
 
     def post(self):
         data = request.form
+        print(data)
         name = data.get('name')
         description = data.get('description')
         image_file = request.files['image']

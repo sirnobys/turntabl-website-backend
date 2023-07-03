@@ -18,13 +18,13 @@ class Blogs(Resource):
 
             if data:
                 for row in data:
-                    (id, name, url, image, description, date_created) = row
+                    (id, name, description, image, url, date_created) = row
                     result.append({
                         'id': id,
                         'name': name,
-                        'url': url,
-                        'image': bytes(image).decode('latin-1'),
                         'description': description,
+                        'image': bytes(image).decode('latin-1'),
+                        'url': url,
                         'date_created': date_created.strftime('%Y-%m-%d %H:%M:%S')
                     })
         except Exception as e:
@@ -51,7 +51,7 @@ class Blogs(Resource):
             db = connect_to_db()
             db.add_entry(
                         'blogs',
-                        ['name', 'url', 'image', 'description'],
+                        ['name', 'description', 'image', 'url'],
                         name, url, binary_data, description
                       )
         except Exception as e:
