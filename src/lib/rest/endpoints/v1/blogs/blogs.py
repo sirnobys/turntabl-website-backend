@@ -18,13 +18,13 @@ class Blogs(Resource):
 
             if data:
                 for row in data:
-                    (id, name, description, image, url, date_created) = row
+                    (id, name, description, image, link, date_created) = row
                     result.append({
                         'id': id,
                         'name': name,
                         'description': description,
                         'image': bytes(image).decode('latin-1'),
-                        'url': url,
+                        'link': link,
                         'date_created': date_created.strftime('%Y-%m-%d %H:%M:%S')
                     })
         except Exception as e:
@@ -40,7 +40,7 @@ class Blogs(Resource):
     def post(self):
         data = request.form
         name = data.get('name')
-        url = data.get('url')
+        link = data.get('link')
         image_file = request.files['image']
         binary_data = image_file.read()
         description = data.get('description')
@@ -51,8 +51,8 @@ class Blogs(Resource):
             db = connect_to_db()
             db.add_entry(
                         'blogs',
-                        ['name', 'description', 'image', 'url'],
-                        name, url, binary_data, description
+                        ['name', 'description', 'image', 'link'],
+                        name, description, binary_data, link
                       )
         except Exception as e:
             resp = f'Something went wrong. Details: {e}'
