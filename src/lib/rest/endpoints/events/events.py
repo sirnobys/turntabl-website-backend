@@ -1,3 +1,4 @@
+import json
 import logging
 
 from flask import request
@@ -23,13 +24,14 @@ class Events(Resource):
 
             if data:
                 for row in data:
-                    (id, name, description, image, links, status, date_created) = row
+                    (id, name, description, image, link, status, date_created) = row
+                    print(link)
                     result.append({
                         'id': id,
                         'name': name,
                         'description': description,
                         'image': bytes(image).decode('latin-1'),
-                        'links': links,
+                        'link': json.loads(link),
                         'status': status,
                         'date_created': date_created.strftime('%Y-%m-%d %H:%M:%S')
                     })
@@ -49,9 +51,8 @@ class Events(Resource):
         description = data.get('description')
         image_file = request.files['image']
         binary_data = image_file.read()
-        links = data.get('links')
+        link = json.dumps(data.get('link'))
         status = data.get('status')
-
         resp = 'success'
         status_code = 200
 
@@ -59,8 +60,8 @@ class Events(Resource):
             db = connect_to_db()
             db.add_entry(
                 'events',
-                ['name', 'description', 'image', 'links', 'status'],
-                name, description, binary_data, links, status
+                ['name', 'description', 'image', 'link', 'status'],
+                name, description, binary_data, link, status
             )
         except Exception as e:
             resp = f'Something went wrong. Details: {e}'
