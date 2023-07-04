@@ -1,3 +1,4 @@
+import json
 import logging
 
 from flask import request
@@ -46,18 +47,17 @@ class Careers(Resource):
         return resp, status_code
 
     def post(self):
-        data = request.json
+        data = request.form
         name = data.get('name')
         department = data.get('department')
         description = data.get('description')
-        requirements = data.get('requirements')
-        responsibilities = data.get('responsibilities')
-        technologies = data.get('technologies')
+        requirements = json.loads(data.get('requirements'))
+        responsibilities = json.loads(data.get('responsibilities'))
+        technologies = json.loads(data.get('technologies'))
         salary = data.get('salary')
 
         resp = 'success'
         status_code = 200
-
         try:
             db = connect_to_db()
             db.add_entry(
