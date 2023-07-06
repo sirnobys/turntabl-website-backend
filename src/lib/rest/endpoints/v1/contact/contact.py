@@ -51,7 +51,7 @@ class Contact(Resource):
 
         resp = 'success'
         status_code = 200
-
+        print(name)
         try:
             db = connect_to_db()
             db.add_entry(

@@ -50,3 +50,37 @@ class Database():
         except Exception as e:
             raise e
         return True
+
+    def update_entry(self, table_name, updated_data, filters={}):
+        filter_items = [f'{k}={v}' for k, v in filters.items()]
+        updates = [f"{k} = '{v}'" for k, v in updated_data.items()]
+        cmd = f'UPDATE %s SET {",".join(updates)}' % table_name
+        if len(filter_items) != 0:
+            cmd = cmd + ' WHERE ' + 'AND '.join(filter_items)
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute(cmd)
+            self.conn.commit()
+            cursor.close()
+            self.conn.close()
+        except Exception as e:
+            raise e
+
+        return True
+
+    def delete_entry(self, table_name, filters={}):
+        filter_items = [f'{k}={v}' for k, v in filters.items()]
+        cmd = 'DELETE FROM %s' % table_name
+        if len(filter_items) != 0:
+            cmd = cmd + ' WHERE ' + 'AND '.join(filter_items)
+
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute(cmd)
+            self.conn.commit()
+            cursor.close()
+            self.conn.close()
+        except Exception as e:
+            raise e
+
+        return True
