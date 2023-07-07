@@ -53,10 +53,16 @@ class Database():
 
     def update_entry(self, table_name, updated_data, filters={}):
         filter_items = [f'{k}={v}' for k, v in filters.items()]
-        updates = [f"{k} = '{v}'" for k, v in updated_data.items()]
-        cmd = f'UPDATE %s SET {",".join(updates)}' % table_name
+        updates = [f"{k} = '{v}'" for k, v in updated_data.items() if not isinstance(v, list)]
+        updates_with_list = [f"{k} = ARRAY{v}" for k, v in updated_data.items() if isinstance(v, list)]
+
+        if not updates_with_list:
+            cmd = f'UPDATE %s SET {",".join(updates)}' % table_name
+        else:
+            cmd = f'UPDATE %s SET {",".join(updates)},{",".join(updates_with_list)}' % table_name
         if len(filter_items) != 0:
             cmd = cmd + ' WHERE ' + 'AND '.join(filter_items)
+
         try:
             cursor = self.conn.cursor()
             cursor.execute(cmd)

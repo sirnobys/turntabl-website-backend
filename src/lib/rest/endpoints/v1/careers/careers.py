@@ -30,9 +30,9 @@ class Careers(Resource):
                         'name': name,
                         'department': department,
                         'description': description,
-                        'requirements': requirements,
-                        'responsibilities': responsibilities,
-                        'technologies': technologies,
+                        'requirements': [r.strip("'") for r in requirements],
+                        'responsibilities': [r.strip("'") for r in responsibilities],
+                        'technologies': [r.strip("'") for r in technologies],
                         'salary': salary,
                         'date_created': date_created.strftime('%Y-%m-%d %H:%M:%S')
                     })
@@ -76,12 +76,29 @@ class Careers(Resource):
         filters = {}
         filters['id'] = id
         data = request.json
-        print(data)
+        name = data.get('name')
+        department = data.get('department')
+        description = data.get('description')
+        requirements = data.get('requirements')
+        responsibilities = data.get('responsibilities')
+        technologies = data.get('technologies')
+        salary = data.get('salary')
+
+        new_entry = {
+            "name": name,
+            "department": department,
+            "description": description,
+            "requirements": requirements,
+            "responsibilities": responsibilities,
+            "technologies": technologies,
+            "salary": salary
+        }
+
         resp = 'success'
         status_code = 200
         try:
             db = connect_to_db()
-            db.update_entry('careers', data, filters)
+            db.update_entry('careers', new_entry, filters)
         except Exception as e:
             resp = f'Something went wrong. Details: {e}'
             status_code = 500
