@@ -65,7 +65,7 @@ class Authenticate(Resource):
     def put(self, id):
         filters = {}
         filters['id'] = id
-        data = request.json
+        data = request.form
         name = data.get('name')
         email = data.get('email')
 
