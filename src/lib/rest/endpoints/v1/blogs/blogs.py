@@ -64,5 +64,18 @@ class Blogs(Resource):
     def put(self):
         return 'update'
 
-    def delete(self):
-        return 'delete'
+    def delete(self, id):
+        filters = {}
+        filters['id'] = id
+
+        resp = 'success'
+        status_code = 200
+        try:
+            db = connect_to_db()
+            db.delete_entry('blogs', filters)
+        except Exception as e:
+            resp = f'Something went wrong. Details: {e}'
+            status_code = 500
+            logging.error(resp)
+
+        return resp, status_code
