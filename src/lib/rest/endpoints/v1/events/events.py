@@ -71,7 +71,20 @@ class Events(Resource):
         return resp, status_code
 
     def put(self):
-        return 'update'
+        return 'success'
 
-    def delete(self):
-        return 'delete'
+    def delete(self, id):
+        filters = {}
+        filters['id'] = id
+
+        resp = 'success'
+        status_code = 200
+        try:
+            db = connect_to_db()
+            db.delete_entry('events', filters)
+        except Exception as e:
+            resp = f'Something went wrong. Details: {e}'
+            status_code = 500
+            logging.error(resp)
+
+        return resp, status_code
