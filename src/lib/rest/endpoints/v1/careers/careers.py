@@ -24,7 +24,7 @@ class Careers(Resource):
 
             if data:
                 for row in data:
-                    (id, name, department, description, requirements, responsibilities, technologies, salary, date_created) = row
+                    (id, name, department, description, requirements, responsibilities, technologies, salary, date_created, hidden) = row
                     result.append({
                         'id': id,
                         'name': name,
@@ -34,7 +34,8 @@ class Careers(Resource):
                         'responsibilities': [r.strip("'") for r in responsibilities],
                         'technologies': [r.strip("'") for r in technologies],
                         'salary': salary,
-                        'date_created': date_created.strftime('%Y-%m-%d %H:%M:%S')
+                        'date_created': date_created.strftime('%Y-%m-%d %H:%M:%S'),
+                        'hidden': hidden
                     })
         except Exception as e:
             error = f'Something went wrong. Details: {e}'
@@ -55,6 +56,7 @@ class Careers(Resource):
         responsibilities = json.loads(data.get('responsibilities'))
         technologies = json.loads(data.get('technologies'))
         salary = data.get('salary')
+        hidden = data.get('hidden')
 
         resp = 'success'
         status_code = 200
@@ -62,8 +64,8 @@ class Careers(Resource):
             db = connect_to_db()
             db.add_entry(
                 'careers',
-                ['name', 'department', 'description', 'requirements', 'responsibilities', 'technologies', 'salary'],
-                name, department, description, requirements, responsibilities, technologies, salary
+                ['name', 'department', 'description', 'requirements', 'responsibilities', 'technologies', 'salary', 'hidden'],
+                name, department, description, requirements, responsibilities, technologies, salary, hidden
             )
         except Exception as e:
             resp = f'Something went wrong. Details: {e}'
@@ -83,6 +85,8 @@ class Careers(Resource):
         responsibilities = data.get('responsibilities')
         technologies = data.get('technologies')
         salary = data.get('salary')
+        hidden = data.get('hidden')
+
 
         new_entry = {
             "name": name,
@@ -91,7 +95,8 @@ class Careers(Resource):
             "requirements": requirements,
             "responsibilities": responsibilities,
             "technologies": technologies,
-            "salary": salary
+            "salary": salary,
+            "hidden": hidden
         }
 
         resp = 'success'
