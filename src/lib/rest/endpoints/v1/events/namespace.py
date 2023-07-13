@@ -1,6 +1,6 @@
 from flask_restx import Namespace
 
-from src.lib.rest.endpoints.v1.events.events import Events
+from endpoints.v1.events.events import Events
 
 api = Namespace('events', description='', path='/api/v1/events')
 api.add_resource(Events, '/', methods=['GET', 'POST'])

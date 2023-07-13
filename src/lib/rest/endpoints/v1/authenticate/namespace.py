@@ -1,6 +1,6 @@
 from flask_restx import Namespace
 
-from src.lib.rest.endpoints.v1.authenticate.authenticate import Authenticate
+from endpoints.v1.authenticate.authenticate import Authenticate
 
 api = Namespace('authenticate', description='', path='/api/v1/authenticate')
 api.add_resource(Authenticate, '/', methods=['GET', 'POST'])

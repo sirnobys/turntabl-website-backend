@@ -1,6 +1,6 @@
 from flask_restx import Namespace
 
-from src.lib.rest.endpoints.v1.contact.contact import Contact
+from endpoints.v1.contact.contact import Contact
 
 api = Namespace('contact', description='', path='/api/v1/contact')
 api.add_resource(Contact, '/', methods=['GET', 'POST'])

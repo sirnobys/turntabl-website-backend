@@ -3,7 +3,7 @@ import logging
 from flask import request
 from flask_restx import Resource
 
-from src.lib.db.db_utils import connect_to_db
+from db.db_utils import connect_to_db
 
 
 class Contact(Resource):

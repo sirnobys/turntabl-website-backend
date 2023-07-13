@@ -1,3 +1,3 @@
 # turntabl-website-backend
 - pip install -r requirements.txt
-- run python -m flask --app lib/rest/api run
+- run python src/lib/rest/api.py

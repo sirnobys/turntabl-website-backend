@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from src.lib.db.database import Database
+from db.database import Database
 
 
 def connect_to_db():

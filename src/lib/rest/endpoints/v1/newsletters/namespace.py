@@ -1,6 +1,6 @@
 from flask_restx import Namespace
 
-from src.lib.rest.endpoints.v1.newsletters.newsletters import Newsletters
+from endpoints.v1.newsletters.newsletters import Newsletters
 
 
 api = Namespace('newsletters', description='', path='/api/v1/newsletters')

@@ -1,6 +1,6 @@
 from flask_restx import Namespace
 
-from src.lib.rest.endpoints.v1.career_applicants.career_applicants import CareerApplicants
+from endpoints.v1.career_applicants.career_applicants import CareerApplicants
 
 api = Namespace('career-applicants', description='', path='/api/v1/career-applicants')
 api.add_resource(CareerApplicants, '/', methods=['GET', 'POST'])
