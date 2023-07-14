@@ -10,5 +10,7 @@ def connect_to_db():
     user_name = os.getenv('DB_USER_NAME')
     password = os.getenv('DB_PASSWORD')
     port = os.getenv('DB_PORT')
+    schema = os.getenv('DB_SCHEMA')
+    options = f'-c search_path={schema}'
 
-    return Database(hostname, db_name, user_name, password, port)
+    return Database(hostname, db_name, user_name, password, port, options)

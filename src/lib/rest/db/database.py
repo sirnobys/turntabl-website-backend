@@ -1,12 +1,13 @@
 import psycopg2
 
 class Database():
-    def __init__(self, hostname, db_name, username, password, port):
+    def __init__(self, hostname, db_name, username, password, port, options):
         self.hostname = hostname
         self.db_name = db_name
         self.username = username
         self.password = password
         self.port = port
+        self.options = options
         self.conn = self.connect()
 
     def connect(self):
@@ -15,7 +16,8 @@ class Database():
             dbname=self.db_name,
             user=self.username,
             password=self.password,
-            port=self.port
+            port=self.port,
+            options=self.options
         )
 
     def get_entry(self, table_name, filters={}):
